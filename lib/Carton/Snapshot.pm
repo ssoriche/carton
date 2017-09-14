@@ -150,7 +150,12 @@ sub find_installs {
     my $accepts = sub {
         my $module = shift;
 
-        return 0 unless $reqs->accepts_module($module->{name}, $module->{provides}{$module->{name}}{version});
+        my $version = $module->{provides} && $module->{provides}{$module->{name}}{version}
+            ?  $module->{provides}{$module->{name}}{version}
+                : $module->{version}
+        ;
+
+        return 0 unless $reqs->accepts_module($module->{name}, $version);
 
         if (my $exist = $installs{$module->{name}}) {
             my $old_ver = version::->new($exist->{provides}{$module->{name}}{version});
